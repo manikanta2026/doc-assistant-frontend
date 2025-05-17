@@ -40,7 +40,7 @@ const Demo = () => {
     formData.append('summary_type', summaryLevel);
 
     try {
-      const response = await axios.post('https://doc-assistant-cddade574ae5.herokuapp.com/summary', formData, {
+      const response = await axios.post('https://doc-backend-1-rd0w.onrender.com/summary', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -67,7 +67,7 @@ const Demo = () => {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('https://doc-assistant-cddade574ae5.herokuapp.com/qa', formData, {
+      const response = await axios.post('https://doc-backend-1-rd0w.onrender.com//qa', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
