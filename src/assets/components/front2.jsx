@@ -12,10 +12,10 @@ const Hero = () => {
       </nav>
       <h1 className="head_text">
         Summarize and Generate Q&A with <br className="max-md:hidden" />
-        <span className="blue_gradient">SummarEase</span>
+        <span className="blue_gradient">Doc-Assistant</span>
       </h1>
       <h2 className="desc">
-        Simplify your reading with SummarEase, an open-source tool that transforms lengthy PDFs into clear and concise summaries and generates Q&A
+        Simplify your reading with Doc-Assistant , an open-source tool that transforms lengthy Documents into clear and concise summaries and generates Q&A
       </h2>
     </header>
   );
