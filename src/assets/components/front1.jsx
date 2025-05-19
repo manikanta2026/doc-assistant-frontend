@@ -11,14 +11,20 @@ const Demo = () => {
   const [summaryLevel, setSummaryLevel] = useState('medium');
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [error, setError] = useState(''); // Add error state
+  const [error, setError] = useState('');
+
+  const allowedTypes = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation" // .pptx
+  ];
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    if (selectedFile && selectedFile.type !== "application/pdf") {
-      setError("Please upload a PDF file.");
+    if (selectedFile && !allowedTypes.includes(selectedFile.type)) {
+      setError("Please upload a PDF, DOCX, or PPTX file.");
       setFile(null);
-      event.target.value = null; // Reset file input
+      event.target.value = null;
     } else {
       setError('');
       setFile(selectedFile);
@@ -28,12 +34,12 @@ const Demo = () => {
   const handleSummarySubmit = async (event) => {
     event.preventDefault();
     if (!file) {
-      setError("Please select a PDF file.");
+      setError("Please select a valid file.");
       return;
     }
     setIsLoading(true);
     setIsDisabled(true);
-    setError(''); // Clear error on submit
+    setError('');
 
     const formData = new FormData();
     formData.append('file', file);
@@ -41,43 +47,42 @@ const Demo = () => {
 
     try {
       const response = await axios.post('https://doc-backend-1-rd0w.onrender.com/summary', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
       setSummary(response.data.summary);
     } catch (error) {
       console.error('Error uploading the file:', error);
+      setError('Failed to get summary.');
     } finally {
       setIsLoading(false);
-      setIsDisabled(false); // Re-enable both buttons after request completes
+      setIsDisabled(false);
     }
   };
 
   const handleQaSubmit = async (event) => {
     event.preventDefault();
     if (!file) {
-      setError("Please select a PDF file.");
+      setError("Please select a valid file.");
       return;
     }
     setIsLoading(true);
     setIsDisabled(true);
-    setError(''); // Clear error on submit
+    setError('');
+
     const formData = new FormData();
     formData.append('file', file);
 
     try {
       const response = await axios.post('https://doc-backend-1-rd0w.onrender.com//qa', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+        headers: { 'Content-Type': 'multipart/form-data' },
       });
-      setQa(response.data.qa || []);  
+      setQa(response.data.qa || []);
     } catch (error) {
       console.error('Error uploading the file:', error);
+      setError('Failed to get Q&A.');
     } finally {
       setIsLoading(false);
-      setIsDisabled(false); // Re-enable both buttons after request completes
+      setIsDisabled(false);
     }
   };
 
@@ -91,7 +96,6 @@ const Demo = () => {
 
   return (
     <section className="mt-16 w-full max-w-xl mx-auto">
-      {/* Show error message if exists */}
       {error && (
         <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded mb-4 text-center">
           {error}
@@ -101,6 +105,7 @@ const Demo = () => {
         <form className="relative flex flex-col items-center gap-2" onSubmit={handleSummarySubmit}>
           <input
             type="file"
+            accept=".pdf,.docx,.pptx"
             onChange={handleFileChange}
             required
             className="file_input"
@@ -117,18 +122,10 @@ const Demo = () => {
               <option value="medium">Summary</option>
               <option value="large">Article</option>
             </select>
-            <button
-              type="submit"
-              className="submit_btn"
-              disabled={isDisabled}
-            >
+            <button type="submit" className="submit_btn" disabled={isDisabled}>
               Summarize
             </button>
-            <button
-              onClick={handleQaSubmit}
-              className="submit_btn"
-              disabled={isDisabled}
-            >
+            <button onClick={handleQaSubmit} className="submit_btn" disabled={isDisabled}>
               Generate Q&A
             </button>
           </div>
@@ -138,13 +135,12 @@ const Demo = () => {
       {isLoading && <div className="loader"></div>}
 
       <div className="my-10 max-w-full flex justify-center items-center">
-      {summary ? (
+        {summary ? (
           <div className="flex flex-col gap-3">
             <h2 className="font-satoshi font-bold text-gray-600">
-               <span className="blue_gradient">PDF Summary</span>
+              <span className="blue_gradient">PDF Summary</span>
             </h2>
             <div className="summary_box font-inter font-medium text-sm">
-              {/* Render HTML summary safely */}
               <div dangerouslySetInnerHTML={{ __html: summary }} />
             </div>
             <div className="copy_btn" onClick={() => handleCopy(summary)}>
@@ -159,13 +155,12 @@ const Demo = () => {
           <p>No summary available.</p>
         )}
 
-      {qa.length > 0 ? (
+        {qa.length > 0 ? (
           <div className="flex flex-col gap-3">
             <h2 className="font-satoshi font-bold text-gray-600">
-               <span className="blue_gradient">PDF Q&A</span>
+              <span className="blue_gradient">PDF Q&A</span>
             </h2>
             <div className="summary_box font-inter font-medium text-sm">
-              {/* Render HTML summary safely */}
               <div dangerouslySetInnerHTML={{ __html: qa }} />
             </div>
             <div className="copy_btn" onClick={() => handleCopy(qa)}>
@@ -179,7 +174,6 @@ const Demo = () => {
         ) : (
           <p>No Q&A available.</p>
         )}
-
       </div>
     </section>
   );
