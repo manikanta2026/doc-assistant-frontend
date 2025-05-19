@@ -138,7 +138,7 @@ const Demo = () => {
         {summary ? (
           <div className="flex flex-col gap-3">
             <h2 className="font-satoshi font-bold text-gray-600">
-              <span className="blue_gradient">PDF Summary</span>
+              <span className="blue_gradient">Summary</span>
             </h2>
             <div className="summary_box font-inter font-medium text-sm">
               <div dangerouslySetInnerHTML={{ __html: summary }} />
@@ -158,7 +158,7 @@ const Demo = () => {
         {qa.length > 0 ? (
           <div className="flex flex-col gap-3">
             <h2 className="font-satoshi font-bold text-gray-600">
-              <span className="blue_gradient">PDF Q&A</span>
+              <span className="blue_gradient">Q&A</span>
             </h2>
             <div className="summary_box font-inter font-medium text-sm">
               <div dangerouslySetInnerHTML={{ __html: qa }} />
