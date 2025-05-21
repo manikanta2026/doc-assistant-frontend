@@ -46,7 +46,7 @@ const Demo = () => {
     formData.append('summary_type', summaryLevel);
 
     try {
-      const response = await axios.post('http://localhost:5000/summary', formData, {
+      const response = await axios.post('https://doc-backend-an32.onrender.com/summary', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setSummary(response.data.summary);
@@ -74,7 +74,7 @@ const Demo = () => {
     formData.append('summary_type', summaryLevel);
 
     try {
-      const response = await axios.post('http://localhost:5000/qa', formData, {
+      const response = await axios.post('https://doc-backend-an32.onrender.com/qa', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setQa(response.data.qa || []);
