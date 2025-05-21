@@ -46,7 +46,7 @@ const Demo = () => {
     formData.append('summary_type', summaryLevel);
 
     try {
-      const response = await axios.post('https://doc-backend-an32.onrender.com/summary', formData, {
+      const response = await axios.post('http://localhost:5000/summary', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setSummary(response.data.summary);
@@ -71,9 +71,10 @@ const Demo = () => {
 
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('summary_type', summaryLevel);
 
     try {
-      const response = await axios.post('https://doc-backend-an32.onrender.com//qa', formData, {
+      const response = await axios.post('http://localhost:5000/qa', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setQa(response.data.qa || []);
@@ -118,9 +119,9 @@ const Demo = () => {
               className="drop-down-menu"
               disabled={isDisabled}
             >
-              <option value="small">Abstract</option>
-              <option value="medium">Summary</option>
-              <option value="large">Article</option>
+              <option value="small">Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
             </select>
             <button type="submit" className="submit_btn" disabled={isDisabled}>
               Summarize
