@@ -27,7 +27,8 @@ const Quiz = () => {
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i].trim();
 
-            if (line.startsWith("Question:")) {
+            // Accept "Question:", "Question 1:", "Question 2:", etc.
+            if (/^Question(\s*\d*)?:/i.test(line)) {
                 if (currentQuestion) {
                     questions.push({ question: currentQuestion, options: options.slice(), optionTexts: { ...optionTexts } });
                     correctAnswersMap[currentQuestion] = correctAnswer;
