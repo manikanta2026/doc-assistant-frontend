@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import copy from "./copy.svg";
 import tick from "./tick.svg";
+import { useNavigate } from 'react-router-dom';
 
 const Demo = () => {
   const [summary, setSummary] = useState('');
@@ -12,11 +13,12 @@ const Demo = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const allowedTypes = [
     "application/pdf",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
-    "application/vnd.openxmlformats-officedocument.presentationml.presentation" // .pptx
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation"
   ];
 
   const handleFileChange = (event) => {
@@ -46,7 +48,7 @@ const Demo = () => {
     formData.append('summary_type', summaryLevel);
 
     try {
-      const response = await axios.post('https://doc-backend-an32.onrender.com/summary', formData, {
+      const response = await axios.post('http://localhost:5000/summary', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setSummary(response.data.summary);
@@ -74,7 +76,7 @@ const Demo = () => {
     formData.append('summary_type', summaryLevel);
 
     try {
-      const response = await axios.post('https://doc-backend-an32.onrender.com/qa', formData, {
+      const response = await axios.post('http://localhost:5000/qa', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setQa(response.data.qa || []);
@@ -92,6 +94,34 @@ const Demo = () => {
       setCopied(text);
       navigator.clipboard.writeText(text);
       setTimeout(() => setCopied(''), 3000); 
+    }
+  };
+
+  const handleQuizGenerate = async (event) => {
+    event.preventDefault();
+    if (!file) {
+      setError("Please select a valid file.");
+      return;
+    }
+    setIsLoading(true);
+    setIsDisabled(true);
+    setError('');
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await axios.post('http://localhost:5000/quiz', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      // Navigate to quiz page with quiz data
+      navigate('/quiz', { state: { quiz: response.data.quiz } });
+    } catch (error) {
+      console.error('Error generating quiz:', error);
+      setError('Failed to generate quiz.');
+    } finally {
+      setIsLoading(false);
+      setIsDisabled(false);
     }
   };
 
@@ -129,16 +159,19 @@ const Demo = () => {
             <button onClick={handleQaSubmit} className="submit_btn" disabled={isDisabled}>
               Generate Q&A
             </button>
+            <button onClick={handleQuizGenerate} className="submit_btn" disabled={isDisabled}>
+              Generate Quiz
+            </button>
           </div>
         </form>
       </div>
 
       {isLoading && <div className="loader"></div>}
 
-      <div className="my-10 max-w-full flex justify-center items-center">
+      <div className="my-5 max-w-full flex flex-col justify-center items-center">
         {summary ? (
           <div className="flex flex-col gap-3">
-            <h2 className="font-satoshi font-bold text-gray-600">
+            <h2 className="font-satoshi font-bold text-gray-600 text-base">
               <span className="blue_gradient">Summary</span>
             </h2>
             <div className="summary_box font-inter font-medium text-sm">
@@ -158,7 +191,7 @@ const Demo = () => {
 
         {qa.length > 0 ? (
           <div className="flex flex-col gap-3">
-            <h2 className="font-satoshi font-bold text-gray-600">
+            <h2 className="font-satoshi font-bold text-gray-600 text-base mt-5">
               <span className="blue_gradient">Q&A</span>
             </h2>
             <div className="summary_box font-inter font-medium text-sm">
